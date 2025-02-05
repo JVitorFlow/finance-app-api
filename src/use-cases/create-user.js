@@ -1,28 +1,41 @@
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import { PostgresCreateUserRepository } from "../repositories/postgres/create-user.js";
+import { PostgresCompareEmail } from "../repositories/postgres/compareEmail.js";
 
 export class CreateUserUseCase {
-  constructor() {}
   async execute(createUserParams) {
-    // TODO: verifica se o email já está em uso
+    try {
+      const postgresCompareEmail = new PostgresCompareEmail();
 
-    // gerar ID do usuário
-    const userId = uuidv4();
+      const emailExists = await postgresCompareEmail.execute(
+        createUserParams.email,
+      );
 
-    // criptografar a senha
-    const hashedPassword = await bcrypt.hash(createUserParams.password, 10);
+      if (emailExists) {
+        throw new Error("E-mail is already in use");
+      }
 
-    // inserir o usuário no banco de dados
-    const user = {
-      ...createUserParams,
-      id: userId,
-      password: hashedPassword,
-    };
+      // gerar ID do usuário
+      const userId = uuidv4();
 
-    // chama o repositório
-    const postgresCreateUserRepository = new PostgresCreateUserRepository();
+      // criptografar a senha
+      const hashedPassword = await bcrypt.hash(createUserParams.password, 10);
 
-    return await postgresCreateUserRepository.execute(user);
+      // inserir o usuário no banco de dados
+      const user = {
+        ...createUserParams,
+        id: userId,
+        password: hashedPassword,
+      };
+
+      // chama o repositório
+      const postgresCreateUserRepository = new PostgresCreateUserRepository();
+
+      return await postgresCreateUserRepository.execute(user);
+    } catch (error) {
+      console.error("Erro no Use Case:", error.message);
+      throw error;
+    }
   }
 }
