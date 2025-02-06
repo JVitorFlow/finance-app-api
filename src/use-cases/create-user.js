@@ -1,19 +1,20 @@
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
 import { PostgresCreateUserRepository } from "../repositories/postgres/create-user.js";
-import { PostgresCompareEmail } from "../repositories/postgres/compareEmail.js";
+import { PostgresGetUserByEmailRepository } from "../repositories/postgres/get-user-by-email.js";
+import { EmailAlreadyExists } from "../errors/user.js";
 
 export class CreateUserUseCase {
   async execute(createUserParams) {
     try {
-      const postgresCompareEmail = new PostgresCompareEmail();
+      const postgresgetUserByEmailRepository =
+        new PostgresGetUserByEmailRepository();
 
-      const emailExists = await postgresCompareEmail.execute(
-        createUserParams.email,
-      );
+      const userWithProvidedEmail =
+        await postgresgetUserByEmailRepository.execute(createUserParams.email);
 
-      if (emailExists) {
-        throw new Error("E-mail is already in use");
+      if (userWithProvidedEmail) {
+        throw new EmailAlreadyExists(createUserParams.email);
       }
 
       // gerar ID do usuário
