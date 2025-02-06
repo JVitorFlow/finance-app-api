@@ -1,8 +1,10 @@
 import "dotenv/config.js";
 import express from "express";
-import { CreateuserController } from "./src/controllers/create-user.js";
-import { GetuserByIdController } from "./src/controllers/get-user-by-id.js";
-import { UpdateUserController } from "./src/controllers/update-user.js";
+import {
+  CreateuserController,
+  GetuserByIdController,
+  UpdateUserController,
+} from "./src/controllers/index.js";
 
 const app = express();
 
