@@ -1,19 +1,17 @@
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcrypt";
-import {
-  PostgresCreateUserRepository,
-  PostgresGetUserByEmailRepository,
-} from "../repositories/postgres/index.js";
 import { EmailAlreadyExists } from "../errors/user.js";
 
 export class CreateUserUseCase {
+  constructor(getUserByEmailRepository, createUserRepository) {
+    this.getUserByEmailRepository = getUserByEmailRepository;
+    this.createUserRepository = createUserRepository;
+  }
   async execute(createUserParams) {
     try {
-      const postgresgetUserByEmailRepository =
-        new PostgresGetUserByEmailRepository();
-
-      const userWithProvidedEmail =
-        await postgresgetUserByEmailRepository.execute(createUserParams.email);
+      const userWithProvidedEmail = await this.getUserByEmailRepository.execute(
+        createUserParams.email,
+      );
 
       if (userWithProvidedEmail) {
         throw new EmailAlreadyExists(createUserParams.email);
@@ -33,9 +31,8 @@ export class CreateUserUseCase {
       };
 
       // chama o repositório
-      const postgresCreateUserRepository = new PostgresCreateUserRepository();
 
-      return await postgresCreateUserRepository.execute(user);
+      return await this.createUserRepository.execute(user);
     } catch (error) {
       console.error("Erro no Use Case:", error.message);
       throw error;
