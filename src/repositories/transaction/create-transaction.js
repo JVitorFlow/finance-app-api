@@ -9,12 +9,12 @@ export class PostgresCreateTransactionRepository {
        RETURNING *
        `,
       [
-        (createTransactionParams.id,
+        createTransactionParams.id,
         createTransactionParams.user_id,
         createTransactionParams.name,
         createTransactionParams.date,
         createTransactionParams.amount,
-        createTransactionParams.type),
+        createTransactionParams.type,
       ],
     );
 
