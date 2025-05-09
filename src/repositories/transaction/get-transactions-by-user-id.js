@@ -1,6 +1,6 @@
 import { PostgresHelper } from "../../db/postgres/helper.js";
 
-export class GetTransActionUserById {
+export class PostgresGetTransActionUserByIdRepository {
   async execute(userId) {
     try {
       const query = {
@@ -8,7 +8,8 @@ export class GetTransActionUserById {
         values: [userId],
       };
       const result = await PostgresHelper.query(query);
-      return result.rows;
+
+      return result;
     } catch (error) {
       console.error("Erro no Use Case:", error.message);
       throw error;

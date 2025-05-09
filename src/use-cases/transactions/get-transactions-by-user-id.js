@@ -1,21 +1,21 @@
 import { UserNotFoundError } from "../../errors/user.js";
 
-export class GetTransActionUserById {
+export class GetTransActionUserByIdUseCase {
   constructor(getTransactionsByUserIdRepository, getUserByIdRepository) {
     this.getTransactionsByUserIdRepository = getTransactionsByUserIdRepository;
     this.getUserByIdRepository = getUserByIdRepository;
   }
 
-  async execute(params) {
+  async execute(userId) {
     try {
-      const user = await this.getUserByIdRepository.execute(params.userId);
+      const user = await this.getUserByIdRepository.execute(userId);
 
       if (!user) {
-        throw new UserNotFoundError(params.userId);
+        console.warn("Usuário não encontrado com ID:", userId);
+        throw new UserNotFoundError(userId);
       }
-      const transactions = await this.getTransactionsByUserIdRepository.execute(
-        params.userId,
-      );
+      const transactions =
+        await this.getTransactionsByUserIdRepository.execute(userId);
 
       return transactions;
     } catch (error) {

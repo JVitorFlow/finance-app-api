@@ -1,4 +1,4 @@
-import { UserNotFoundError } from "../../errors/user";
+import { UserNotFoundError } from "../../errors/user.js";
 import {
   checkIfIdIsValid,
   invalidIdResponse,
@@ -8,14 +8,13 @@ import {
   userNotFoundResponse,
 } from "../helpers/index.js";
 
-export class GetTransactionByUserId {
+export class GetTransactionByUserIdController {
   constructor(getTransactionsByUserIdUseCase) {
     this.getTransactionsByUserIdUseCase = getTransactionsByUserIdUseCase;
   }
   async execute(httpRequest) {
     try {
       const userId = httpRequest.query.userId;
-
       if (!userId) {
         return requiredFieldIsMissingResponse("userId");
       }
@@ -31,7 +30,7 @@ export class GetTransactionByUserId {
     } catch (error) {
       console.error("Erro no Use Case:", error.message);
       if (error instanceof UserNotFoundError) {
-        throw userNotFoundResponse();
+        return userNotFoundResponse();
       }
       return serverError();
     }
