@@ -8,7 +8,7 @@ import {
   invalidTypeResponse,
   ok,
   serverError,
-} from "../helpers";
+} from "../helpers/index.js";
 
 export class UpdateTransactionController {
   constructor(updateTransactionUseCase) {
@@ -17,7 +17,8 @@ export class UpdateTransactionController {
 
   async execute(httpRequest) {
     try {
-      const idIsValid = checkIfIdIsValid(httpRequest.params.transactionID);
+      const id = httpRequest.params.transactionId;
+      const idIsValid = checkIfIdIsValid(id);
 
       if (!idIsValid) {
         return invalidIdResponse();
@@ -50,7 +51,7 @@ export class UpdateTransactionController {
       }
 
       const transactionID = await this.updateTransactionUseCase.execute(
-        httpRequest.params.transactionID,
+        id,
         params,
       );
 

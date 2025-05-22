@@ -8,7 +8,6 @@ export class UpdateTransactionUseCase {
       transactionID,
       params,
     );
-
     return transaction;
   }
 }
