@@ -1,5 +1,5 @@
 import "dotenv/config.js";
-import fs from "fs";
+import { fs, readdirSync } from "fs";
 import { pool } from "../helper.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -17,10 +17,16 @@ const __dirname = path.dirname(__filename);
 const execMigrations = async () => {
   const client = await pool.connect();
   try {
-    const filepath = path.join(__dirname, "01-init.sql");
-    const script = fs.readFileSync(filepath, "utf-8");
-    await client.query(script);
-    console.log("Migrations executed successfully");
+    const files = readdirSync(__dirname).filter((file) =>
+      file.endsWith(".sql"),
+    );
+    for (const file of files) {
+      const filepath = path.join(__dirname, file);
+      const script = fs.readFileSync(filepath, "utf-8");
+      await client.query(script);
+      console.log(`Migrations for file ${file} executed successfully`);
+    }
+    console.log("All Migrations executed successfully");
   } catch (error) {
     console.log(error);
   } finally {
