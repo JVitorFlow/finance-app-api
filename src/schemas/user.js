@@ -22,3 +22,7 @@ export const createUserSchema = z.object({
     .trim()
     .min(6, "Password must have at least 6 characters."),
 });
+
+export const updateUserSchema = createUserSchema.partial().strict({
+  message: "Some provided field is not allowed.",
+});
