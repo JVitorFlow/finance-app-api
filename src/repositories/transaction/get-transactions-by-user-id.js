@@ -1,17 +1,20 @@
-import { PostgresHelper } from "../../db/postgres/helper.js";
+import { prisma } from "../../../prisma/prisma.js";
 
 export class PostgresGetTransActionUserByIdRepository {
   async execute(userId) {
     try {
-      const query = {
-        text: `SELECT * FROM transactions WHERE user_id = $1`,
-        values: [userId],
-      };
-      const result = await PostgresHelper.query(query);
+      const transactions = await prisma.transaction.findMany({
+        where: {
+          user_id: userId,
+        },
+        orderBy: {
+          date: "desc", // opcional: ordena da mais recente para a mais antiga
+        },
+      });
 
-      return result;
+      return transactions;
     } catch (error) {
-      console.error("Erro no Use Case:", error.message);
+      console.error("Erro no Repositório:", error.message);
       throw error;
     }
   }
