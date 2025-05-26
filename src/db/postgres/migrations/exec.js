@@ -1,8 +1,9 @@
 import "dotenv/config.js";
-import { fs, readdirSync } from "fs";
+
 import { pool } from "../helper.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 console.log({
   user: process.env.POSTGRES_USER,
@@ -17,9 +18,9 @@ const __dirname = path.dirname(__filename);
 const execMigrations = async () => {
   const client = await pool.connect();
   try {
-    const files = readdirSync(__dirname).filter((file) =>
-      file.endsWith(".sql"),
-    );
+    const files = fs
+      .readdirSync(__dirname)
+      .filter((file) => file.endsWith(".sql"));
     for (const file of files) {
       const filepath = path.join(__dirname, file);
       const script = fs.readFileSync(filepath, "utf-8");
